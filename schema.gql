@@ -1,0 +1,48 @@
+type User {
+  name: String!
+  email: String! @unique(index: "user_by_email")
+  todos: [Todo!] @relation
+  role: Role!
+}
+
+type Todo {
+  name: String!
+  user: User!
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
+  role: Role!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+input LogoutInput {
+  allTokens: Boolean
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+type Query {
+  allUsers: [User!]
+  allTodo: [Todo!]
+}
+
+type Mutation {
+  createUser(data: CreateUserInput): User! @resolver(name: "create_user")
+  loginUser(data: LoginUserInput): AuthPayload! @resolver(name: "login_user")
+  logoutUser(data: LogoutInput): Boolean! @resolver(name: "logout_user")
+}
